@@ -6,6 +6,10 @@
       "Type": "String",
       "Description": "ECS AMI Id"
     },
+    "ImageId": {
+      "Type": "String",
+      "Description": "image id required by cosmos"
+    },
     "EcsInstanceType": {
       "Type": "String",
       "Description": "ECS EC2 instance type",
