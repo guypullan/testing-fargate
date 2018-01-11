@@ -2,7 +2,7 @@
   "ProjectName": "news-devops-toolchain",
   "aws_account_id": "329802642264",
   "aws_region": "us-east-1",
-  "ComponentName": "test-testing-fargate",
+  "ComponentName": "testing-fargate",
   "Environment": "test",
   "EcsInstanceType": "t2.micro",
   "EcsPort": "80",
