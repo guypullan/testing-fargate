@@ -4,6 +4,7 @@
   "aws_region": "us-east-1",
   "ComponentName": "testing-fargate",
   "Environment": "test",
+  "ImageId": "",
   "EcsInstanceType": "t2.micro",
   "EcsPort": "80",
   "ElbHealthCheckTarget": "http:80/",
