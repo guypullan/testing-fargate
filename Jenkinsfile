@@ -13,7 +13,7 @@ pipeline {
   environment {
     COSMOSREPOCONFIG = 'repoconfig.json'
     CONFIGLOCATION = 'infrastructure'
-    COMPONENTNAME = 'test-testing-fargate'
+    COMPONENTNAME = 'testing-fargate'
     CONFIGFILE = "${env.ENVIRONMENT}-${COMPONENTNAME}.json"
     COSMOS_CERT = "/workspace/certs/cert.pem"
     KEY = "/workspace/certs/client.key"
