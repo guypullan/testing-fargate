@@ -411,24 +411,5 @@
         ]
       }
     }
-  },
-  "Outputs": {
-    "EcsInstanceAsgName": {
-      "Condition": "LaunchInstances",
-      "Description": "Auto Scaling Group Name for ECS Instances",
-      "Value": "EcsInstanceAsg"
-    },
-    "EcsElbName": {
-      "Description": "Load Balancer for ECS Service",
-      "Value": [
-        "CreateELB",
-        "EcsElasticLoadBalancer",
-        ""
-      ]
-    },
-    "Version": {
-      "Description": "ECS Cloudformation template version",
-      "Value": "3.0.0"
-    }
   }
 }
