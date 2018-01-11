@@ -1,0 +1,430 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "AWS CloudFormation template to create a new ECS Fargate First Run stack",
+  "Parameters": {
+    "EcsAmiId": {
+      "Type": "String",
+      "Description": "ECS AMI Id"
+    },
+    "EcsInstanceType": {
+      "Type": "String",
+      "Description": "ECS EC2 instance type",
+      "Default": "t2.micro",
+      "ConstraintDescription": "must be a valid EC2 instance type."
+    },
+    "KeyName": {
+      "Type": "String",
+      "Description": "Optional - Name of an existing EC2 KeyPair to enable SSH access to the ECS instances",
+      "Default": ""
+    },
+    "AsgMaxSize": {
+      "Type": "Number",
+      "Description": "Maximum size and initial Desired Capacity of ECS Auto Scaling Group",
+      "Default": "1"
+    },
+    "IamRoleInstanceProfile": {
+      "Type": "String",
+      "Description": "Name or the Amazon Resource Name (ARN) of the instance profile associated with the IAM role for the instance"
+    },
+    "EcsClusterName": {
+      "Type": "String",
+      "Description": "ECS Cluster Name",
+      "Default": "default"
+    },
+    "EcsPort": {
+      "Type": "String",
+      "Description": "Optional - Security Group port to open on ECS instances - defaults to port 80",
+      "Default": "80"
+    },
+    "ElbPort": {
+      "Type": "String",
+      "Description": "Optional - Security Group port to open on ELB - port 80 will be open by default",
+      "Default": "80"
+    },
+    "ElbHealthCheckTarget": {
+      "Type": "String",
+      "Description": "Optional - Health Check Target for ELB - defaults to HTTP:80/",
+      "Default": "HTTP:80/"
+    },
+    "TargetGroupName": {
+      "Type": "String",
+      "Description": "The target group name",
+      "Default": "ECSFirstRunTargetGroup"
+    },
+    "SourceCidr": {
+      "Type": "String",
+      "Description": "Optional - CIDR/IP range for EcsPort and ElbPort - defaults to 0.0.0.0/0",
+      "Default": "0.0.0.0/0"
+    },
+    "EcsEndpoint": {
+      "Type": "String",
+      "Description": "Optional - ECS Endpoint for the ECS Agent to connect to",
+      "Default": ""
+    },
+    "CreateElasticLoadBalancer": {
+      "Type": "String",
+      "Description": "Optional - When set to true, creates a ELB for ECS Service",
+      "Default": "false"
+    },
+    "VpcAvailabilityZones": {
+      "Type": "CommaDelimitedList",
+      "Description": "Optional - Comma-delimited list of two VPC availability zones in which to create subnets",
+      "Default": ""
+    },
+    "VpcCidrBlock": {
+      "Type": "String",
+      "Description": "Optional - CIDR/IP range for the VPC",
+      "Default": "10.0.0.0/16"
+    },
+    "SubnetCidrBlock1": {
+      "Type": "String",
+      "Description": "Optional - CIDR/IP range for the VPC",
+      "Default": "10.0.0.0/24"
+    },
+    "SubnetCidrBlock2": {
+      "Type": "String",
+      "Description": "Optional - CIDR/IP range for the VPC",
+      "Default": "10.0.1.0/24"
+    },
+    "IsFargate": {
+      "Type": "String",
+      "Description": "Optional - Whether to launch instances and create auto scaling group.",
+      "Default": "true"
+    },
+    "TargetType": {
+      "Type": "String",
+      "Description": "Optional - the ALB target group target type, defaults to ip",
+      "Default": "ip"
+    }
+  },
+  "Conditions": {
+    "SetEndpointToECSAgent": [
+      [
+        "EcsEndpoint",
+        ""
+      ]
+    ],
+    "CreateELB": [
+      "CreateElasticLoadBalancer",
+      "true"
+    ],
+    "CreateEC2LCWithKeyPair": [
+      [
+        "KeyName",
+        ""
+      ]
+    ],
+    "UseSpecifiedVpcAvailabilityZones": [
+      [
+        [
+          "",
+          "VpcAvailabilityZones"
+        ],
+        ""
+      ]
+    ],
+    "LaunchInstances": [
+      "IsFargate",
+      "false"
+    ]
+  },
+  "Resources": {
+    "Vpc": {
+      "Type": "AWS::EC2::VPC",
+      "Properties": {
+        "CidrBlock": "VpcCidrBlock",
+        "EnableDnsSupport": "true",
+        "EnableDnsHostnames": "true"
+      }
+    },
+    "PublicSubnetAz1": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": "Vpc",
+        "CidrBlock": "SubnetCidrBlock1",
+        "AvailabilityZone": [
+          "UseSpecifiedVpcAvailabilityZones",
+          [
+            "0",
+            "VpcAvailabilityZones"
+          ],
+          [
+            "0",
+            {
+              "Fn::GetAZs": "AWS::Region"
+            }
+          ]
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": [
+              "/",
+              [
+                "EcsClusterName",
+                "Public"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "PublicSubnetAz2": {
+      "Type": "AWS::EC2::Subnet",
+      "Properties": {
+        "VpcId": "Vpc",
+        "CidrBlock": "SubnetCidrBlock2",
+        "AvailabilityZone": [
+          "UseSpecifiedVpcAvailabilityZones",
+          [
+            "1",
+            "VpcAvailabilityZones"
+          ],
+          [
+            "1",
+            {
+              "Fn::GetAZs": "AWS::Region"
+            }
+          ]
+        ],
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": [
+              "/",
+              [
+                "EcsClusterName",
+                "Public"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "InternetGateway": {
+      "Type": "AWS::EC2::InternetGateway"
+    },
+    "AttachGateway": {
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+      "Properties": {
+        "VpcId": "Vpc",
+        "InternetGatewayId": "InternetGateway"
+      }
+    },
+    "RouteViaIgw": {
+      "Type": "AWS::EC2::RouteTable",
+      "Properties": {
+        "VpcId": "Vpc"
+      }
+    },
+    "PublicRouteViaIgw": {
+      "Type": "AWS::EC2::Route",
+      "DependsOn": "AttachGateway",
+      "Properties": {
+        "RouteTableId": "RouteViaIgw",
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": "InternetGateway"
+      }
+    },
+    "PublicSubnet1RouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": "PublicSubnetAz1",
+        "RouteTableId": "RouteViaIgw"
+      }
+    },
+    "PublicSubnet2RouteTableAssociation": {
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+      "Properties": {
+        "SubnetId": "PublicSubnetAz2",
+        "RouteTableId": "RouteViaIgw"
+      }
+    },
+    "EcsSecurityGroup": {
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "ECS Allowed Ports",
+        "VpcId": "Vpc",
+        "SecurityGroupIngress": [
+          "CreateELB",
+          [
+            {
+              "IpProtocol": "tcp",
+              "FromPort": "EcsPort",
+              "ToPort": "EcsPort",
+              "CidrIp": "SourceCidr"
+            },
+            {
+              "IpProtocol": "tcp",
+              "FromPort": "1",
+              "ToPort": "65535",
+              "SourceSecurityGroupId": "AlbSecurityGroup"
+            }
+          ],
+          [
+            {
+              "IpProtocol": "tcp",
+              "FromPort": "EcsPort",
+              "ToPort": "EcsPort",
+              "CidrIp": "SourceCidr"
+            }
+          ]
+        ]
+      }
+    },
+    "AlbSecurityGroup": {
+      "Condition": "CreateELB",
+      "Type": "AWS::EC2::SecurityGroup",
+      "Properties": {
+        "GroupDescription": "ELB Allowed Ports",
+        "VpcId": "Vpc",
+        "SecurityGroupIngress": [
+          {
+            "IpProtocol": "tcp",
+            "FromPort": "ElbPort",
+            "ToPort": "ElbPort",
+            "CidrIp": "SourceCidr"
+          }
+        ]
+      }
+    },
+    "DefaultTargetGroup": {
+      "Condition": "CreateELB",
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "Name": "TargetGroupName",
+        "VpcId": "Vpc",
+        "Port": "ElbPort",
+        "TargetType": "TargetType",
+        "Protocol": "HTTP"
+      }
+    },
+    "EcsElasticLoadBalancer": {
+      "Condition": "CreateELB",
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Name": "ECS-first-run-alb",
+        "SecurityGroups": [
+          "AlbSecurityGroup"
+        ],
+        "Subnets": [
+          "PublicSubnetAz1",
+          "PublicSubnetAz2"
+        ],
+        "Scheme": "internet-facing"
+      }
+    },
+    "LoadBalancerListener": {
+      "Condition": "CreateELB",
+      "Type": "AWS::ElasticLoadBalancingV2::Listener",
+      "Properties": {
+        "LoadBalancerArn": "EcsElasticLoadBalancer",
+        "Port": "ElbPort",
+        "Protocol": "HTTP",
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "DefaultTargetGroup"
+          }
+        ]
+      }
+    },
+    "EcsInstanceLc": {
+      "Condition": "LaunchInstances",
+      "Type": "AWS::AutoScaling::LaunchConfiguration",
+      "Properties": {
+        "ImageId": "EcsAmiId",
+        "InstanceType": "EcsInstanceType",
+        "AssociatePublicIpAddress": true,
+        "IamInstanceProfile": "IamRoleInstanceProfile",
+        "KeyName": [
+          "CreateEC2LCWithKeyPair",
+          "KeyName",
+          "AWS::NoValue"
+        ],
+        "SecurityGroups": [
+          "EcsSecurityGroup"
+        ],
+        "UserData": [
+          "SetEndpointToECSAgent",
+          {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\n",
+                "echo ECS_CLUSTER=",
+                "EcsClusterName",
+                " >> /etc/ecs/ecs.config",
+                "\necho ECS_BACKEND_HOST=",
+                "EcsEndpoint",
+                " >> /etc/ecs/ecs.config"
+              ]
+            ]
+          },
+          {
+            "Fn::Join": [
+              "",
+              [
+                "#!/bin/bash\n",
+                "echo ECS_CLUSTER=",
+                "EcsClusterName",
+                " >> /etc/ecs/ecs.config"
+              ]
+            ]
+          }
+        ]
+      }
+    },
+    "EcsInstanceAsg": {
+      "Condition": "LaunchInstances",
+      "Type": "AWS::AutoScaling::AutoScalingGroup",
+      "Properties": {
+        "VPCZoneIdentifier": [
+          [
+            ",",
+            [
+              "PublicSubnetAz1",
+              "PublicSubnetAz2"
+            ]
+          ]
+        ],
+        "LaunchConfigurationName": "EcsInstanceLc",
+        "MinSize": "0",
+        "MaxSize": "AsgMaxSize",
+        "DesiredCapacity": "AsgMaxSize",
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": [
+              "",
+              [
+                "ECS Instance - ",
+                "AWS::StackName"
+              ]
+            ],
+            "PropagateAtLaunch": "true"
+          }
+        ]
+      }
+    }
+  },
+  "Outputs": {
+    "EcsInstanceAsgName": {
+      "Condition": "LaunchInstances",
+      "Description": "Auto Scaling Group Name for ECS Instances",
+      "Value": "EcsInstanceAsg"
+    },
+    "EcsElbName": {
+      "Description": "Load Balancer for ECS Service",
+      "Value": [
+        "CreateELB",
+        "EcsElasticLoadBalancer",
+        ""
+      ]
+    },
+    "Version": {
+      "Description": "ECS Cloudformation template version",
+      "Value": "3.0.0"
+    }
+  }
+}
