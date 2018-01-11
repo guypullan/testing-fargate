@@ -5,6 +5,7 @@
   "ComponentName": "testing-fargate",
   "Environment": "test",
   "ImageId": "",
+  "EcsAmiId": "ami-ba722dc0",
   "EcsInstanceType": "t2.micro",
   "EcsPort": "80",
   "ElbHealthCheckTarget": "http:80/",
