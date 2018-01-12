@@ -3,7 +3,7 @@
 def dockerregistry = "329802642264.dkr.ecr.eu-west-1.amazonaws.com"
 def certsprep = "/scripts/infrastructurebuild/certsprep.sh"
 def clean = "git clean -ffde certs"
-string cron_string = BRANCH_NAME == "master" ? 45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main
+if (env.BRANCH_NAME == 'master") {def cron_string = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
 
 }
 pipeline {
@@ -31,7 +31,7 @@ pipeline {
   }
   triggers {
     parameterizedCron('''
-cron_string
+${cron_string}
   ''')
   }
   stages {
