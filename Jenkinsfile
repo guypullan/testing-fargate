@@ -7,12 +7,10 @@ def GitBranchName = scm.branches[0].name
 def cronstring = "something"
 println "this is the git branch"
 println GitBranchName
-//if ( GitBranchName == 'master' ) { println "worked" } else { println "setbutempty" }
-if ( GitBranchName == 'master' ) { cronstring = "itworked" } else { cronstring = "definedbutwrong" }
+//if ( GitBranchName == 'master' ) { cronstring = "itworked" } else { cronstring = "definedbutwrong" }
+if (GitBranchName == 'master') { def cronstring = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
 println "this is the output"
 println cronstring
-
-//if (GitBranchName == 'master') { def cronstring = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
 
 pipeline {
   agent any
