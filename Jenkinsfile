@@ -8,7 +8,7 @@ def cronstring = "something"
 println "this is the git branch"
 println GitBranchName
 //if ( GitBranchName == 'master' ) { cronstring = "itworked" } else { cronstring = "definedbutwrong" }
-if (GitBranchName == 'master') { cronstring = "ds;fkajsf;sdkj45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
+if (GitBranchName == 'master') { cronstring = "45 14 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main"}
 println "this is the output"
 println cronstring
 
