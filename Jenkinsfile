@@ -27,6 +27,11 @@ pipeline {
     string(name: 'STACKLIST', defaultValue: 'all', description: 'which stacks are you working with?  if you want to perform work on all stacks put \"all\" in this section')
     choice(name: 'DEPLOYAPP', choices: 'no\nyes', description: 'Do you want to deploy your application?')
   }
+  triggers {
+    parameterizedCron('''
+45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main
+  ''')
+  }
   stages {
     stage ('Initialize') {
       steps {
