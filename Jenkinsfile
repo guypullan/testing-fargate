@@ -28,9 +28,7 @@ pipeline {
     choice(name: 'DEPLOYAPP', choices: 'no\nyes', description: 'Do you want to deploy your application?')
   }
   triggers {
-    when {
-      expression { branch 'master' }
-    }
+    BRANCH_NAME == "master" ?
     parameterizedCron('''
 45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main
   ''')
