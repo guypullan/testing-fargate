@@ -67,7 +67,8 @@ pipeline {
         }
       }
       steps {
-        sh "echo ${cron_string}"
+//        sh "echo ${cron_string}"
+        sh "env"
         sh "${clean}"
         checkout scm
         sh "${certsprep}"
