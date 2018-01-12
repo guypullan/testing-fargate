@@ -36,7 +36,7 @@ pipeline {
     choice(name: 'DEPLOYAPP', choices: 'no\nyes', description: 'Do you want to deploy your application?')
   }
   triggers {
-    parameterizedCron(${cronstring})
+    parameterizedCron({cronstring})
   }
   stages {
     stage ('Initialize') {
