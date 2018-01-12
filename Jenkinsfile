@@ -6,9 +6,10 @@ def clean = "git clean -ffde certs"
 def GitBranchName = scm.branches[0].name
 println "this is the git branch"
 println GitBranchName
-if ( GitBranchName == 'master' ) { def blahblah = "itworked" } else { def blahblah = "definedbutwrong" }
-println "this is the output"
-println blahblah
+if ( GitBranchName == 'master' ) { println "worked" } else { println "setbutempty" }
+//if ( GitBranchName == 'master' ) { def blahblah = "itworked" } else { def blahblah = "definedbutwrong" }
+//println "this is the output"
+//println blahblah
 
 //if (GitBranchName == 'master') { def cronstring = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
 
