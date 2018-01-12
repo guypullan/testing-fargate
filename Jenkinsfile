@@ -4,6 +4,7 @@ def dockerregistry = "329802642264.dkr.ecr.eu-west-1.amazonaws.com"
 def certsprep = "/scripts/infrastructurebuild/certsprep.sh"
 def clean = "git clean -ffde certs"
 def GitBranchName = scm.branches[0].name
+println GitBranchName
 if ( GitBranchName == 'master' ) { def output = "it worked" }
 //if (GitBranchName == 'master') { def cronstring = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
 
