@@ -3,7 +3,9 @@
 def dockerregistry = "329802642264.dkr.ecr.eu-west-1.amazonaws.com"
 def certsprep = "/scripts/infrastructurebuild/certsprep.sh"
 def clean = "git clean -ffde certs"
+string cron_string = BRANCH_NAME == "master" ? 45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main
 
+}
 pipeline {
   agent any
   options {
@@ -28,10 +30,9 @@ pipeline {
     choice(name: 'DEPLOYAPP', choices: 'no\nyes', description: 'Do you want to deploy your application?')
   }
   triggers {
-    BRANCH_NAME == "master" ?
     parameterizedCron('''
-45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main
-  '''): ""
+cron_string
+  ''')
   }
   stages {
     stage ('Initialize') {
