@@ -50,7 +50,7 @@ pipeline {
       }
       agent {
         docker {
-          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.10${cronstring}"
+          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.10"
           args "-u root -v /etc/pki/tls:/certs"
         }
       }
