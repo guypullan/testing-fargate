@@ -5,7 +5,6 @@ def certsprep = "/scripts/infrastructurebuild/certsprep.sh"
 def clean = "git clean -ffde certs"
 if (env.BRANCH_NAME == 'master') {def cron_string = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
 
-}
 pipeline {
   agent any
   options {
