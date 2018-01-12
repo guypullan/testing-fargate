@@ -31,7 +31,7 @@ pipeline {
     BRANCH_NAME == "master" ?
     parameterizedCron('''
 45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main
-  '''):
+  '''): ""
   }
   stages {
     stage ('Initialize') {
