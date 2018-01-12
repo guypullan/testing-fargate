@@ -28,11 +28,11 @@ pipeline {
     string(name: 'STACKLIST', defaultValue: 'all', description: 'which stacks are you working with?  if you want to perform work on all stacks put \"all\" in this section')
     choice(name: 'DEPLOYAPP', choices: 'no\nyes', description: 'Do you want to deploy your application?')
   }
-  triggers {
-    parameterizedCron('''
-${cron_string}
-  ''')
-  }
+//  triggers {
+//    parameterizedCron('''
+//${cron_string}
+//  ''')
+//  }
   stages {
     stage ('Initialize') {
       steps {
@@ -67,6 +67,7 @@ ${cron_string}
         }
       }
       steps {
+        sh "echo ${cron_string}"
         sh "${clean}"
         checkout scm
         sh "${certsprep}"
