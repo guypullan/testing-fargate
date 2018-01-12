@@ -366,7 +366,7 @@
           "SetEndpointToECSAgent",
           {
             "Fn::Join": [
-              "",
+              ",",
               [
                 "#!/bin/bash\n",
                 "echo ECS_CLUSTER=",
@@ -380,7 +380,7 @@
           },
           {
             "Fn::Join": [
-              "",
+              ",",
               [
                 "#!/bin/bash\n",
                 "echo ECS_CLUSTER=",
