@@ -37,7 +37,8 @@ pipeline {
   }
 //  triggers {
 //    parameterizedCron('''
-  ${cronstring}
+  cronstring
+
 //  ''')
 //  }
   stages {
@@ -52,7 +53,7 @@ pipeline {
       }
       agent {
         docker {
-          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.10"
+          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.10${cronstring}"
           args "-u root -v /etc/pki/tls:/certs"
         }
       }
