@@ -78,7 +78,7 @@ pipeline {
       steps {
 //        sh "echo ${cron_string}"
         sh "echo ${GitBranchName}"
-        sh "echo ${blahblah}"
+        sh "echo ${cronstring}"
         sh "${clean}"
         checkout scm
         sh "${certsprep}"
