@@ -37,7 +37,9 @@ pipeline {
   }
 //  triggers {
 //    parameterizedCron('''
+triggers {
   cronstring
+}
 
 //  ''')
 //  }
