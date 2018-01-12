@@ -8,7 +8,7 @@ def cronstring = "something"
 println "this is the git branch"
 println GitBranchName
 //if ( GitBranchName == 'master' ) { cronstring = "itworked" } else { cronstring = "definedbutwrong" }
-if (GitBranchName == 'master') { cronstring = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
+if (GitBranchName == 'master') { cronstring = "parameterizedCron('''45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main''')"}
 println "this is the output"
 println cronstring
 
@@ -36,9 +36,9 @@ pipeline {
     choice(name: 'DEPLOYAPP', choices: 'no\nyes', description: 'Do you want to deploy your application?')
   }
   triggers {
-    parameterizedCron('''
+//    parameterizedCron('''
 ${cronstring}
-  ''')
+//  ''')
   }
   stages {
     stage ('Initialize') {
