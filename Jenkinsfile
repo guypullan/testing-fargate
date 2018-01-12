@@ -5,7 +5,10 @@ def certsprep = "/scripts/infrastructurebuild/certsprep.sh"
 def clean = "git clean -ffde certs"
 def GitBranchName = scm.branches[0].name
 println GitBranchName
-if ( GitBranchName == 'master' ) { def output = "it worked" }
+if ( GitBranchName == 'master' ) { def blahblah = "it worked" }
+println "this is the output"
+println blahblah
+
 //if (GitBranchName == 'master') { def cronstring = "45 10 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=int;STACKLIST=main"}
 
 pipeline {
@@ -72,7 +75,7 @@ pipeline {
       steps {
 //        sh "echo ${cron_string}"
         sh "echo ${GitBranchName}"
-        sh "echo ${output}"
+        sh "echo ${blahblah}"
         sh "${clean}"
         checkout scm
         sh "${certsprep}"
