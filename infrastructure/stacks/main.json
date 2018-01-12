@@ -102,35 +102,48 @@
     }
   },
   "Conditions": {
-    "SetEndpointToECSAgent": [
-      [
-        "EcsEndpoint",
+    "SetEndpointToECSAgent": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            { "Ref": "ECSEndpoint" },
+            ""
+          ]
+        }
+      ]
+    },
+    "CreateELB": {
+      "Fn::Equals": [
+        { "Ref": "CreateElasticLoadBalancer" },
         ""
       ]
-    ],
-    "CreateELB": [
-      "CreateElasticLoadBalancer",
-      "true"
-    ],
-    "CreateEC2LCWithKeyPair": [
-      [
-        "KeyName",
-        ""
+    },
+    "CreateEC2LCWithKeyPair": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            { "Ref": "KeyName" },
+            ""
+          ]
+        }
       ]
-    ],
-    "UseSpecifiedVpcAvailabilityZones": [
-      [
-        [
-          "",
-          "VpcAvailabilityZones"
-        ],
-        ""
+    },
+    "UseSpecifiedVpcAvailabilityZones": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            { "Fn::Join": [ ",", { "Fn::ImportValue": "VpcAvailablityZones" } ] },
+            ""
+          ]
+        }
       ]
-    ],
-    "LaunchInstances": [
-      "IsFargate",
-      "false"
-    ]
+    },
+    "LaunchInstances": {
+      "Fn::Equals": [
+        { "Ref": "IsFargate" },
+        "false"
+      ]
+    }
   },
   "Resources": {
     "Vpc": {
