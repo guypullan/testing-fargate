@@ -6,7 +6,9 @@ def clean = "git clean -ffde certs"
 def GitBranchName = scm.branches[0].name
 def cronstring = ""
 //if ( GitBranchName == 'master' ) { cronstring = "itworked" } else { cronstring = "definedbutwrong" }
-if (GitBranchName == 'notmaster') { cronstring = "45 14 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main"}
+if (GitBranchName == 'master') { cronstring =
+  "00 15 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main
+  05 15 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main"}
 
 pipeline {
   agent any
