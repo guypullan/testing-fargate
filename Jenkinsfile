@@ -4,8 +4,9 @@ def dockerregistry = "329802642264.dkr.ecr.eu-west-1.amazonaws.com"
 def certsprep = "/scripts/infrastructurebuild/certsprep.sh"
 def clean = "git clean -ffde certs"
 def GitBranchName = scm.branches[0].name
+println "this is the git branch"
 println GitBranchName
-if ( GitBranchName == 'master' ) { def blahblah = "it worked" }
+if ( GitBranchName == 'master' ) { def blahblah = "itworked" } else { def blahblah = "definedbutwrong" }
 println "this is the output"
 println blahblah
 
