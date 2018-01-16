@@ -3,15 +3,14 @@
 def dockerregistry = "329802642264.dkr.ecr.eu-west-1.amazonaws.com"
 def certsprep = "/scripts/infrastructurebuild/certsprep.sh"
 def clean = "git clean -ffde certs"
-def GitBranchName = scm.branches[0].name
-def cronstring = ""
-//if ( GitBranchName == 'master' ) { cronstring = "itworked" } else { cronstring = "definedbutwrong" }
-if (GitBranchName == 'master') { cronstring = "05 15 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main\n10 15 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main"}
+//def GitBranchName = scm.branches[0].name
+//def cronstring = ""
+//if (GitBranchName == 'master') { cronstring = "05 15 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main\n10 15 * * 1-5 % BUILDTASK=infrastructuredeployment;FUNCTION=stackupdate;STACKSCALING=standard;ENVIRONMENT=test;STACKLIST=main"}
 
 pipeline {
   agent any
   options {
-    timeout(time: 1, unit: 'HOURS')
+    timeout(time: 1, unit: 'MINS')
     timestamps ()
   }
   environment {
@@ -31,9 +30,9 @@ pipeline {
     string(name: 'STACKLIST', defaultValue: 'all', description: 'which stacks are you working with?  if you want to perform work on all stacks put \"all\" in this section')
     choice(name: 'DEPLOYAPP', choices: 'no\nyes', description: 'Do you want to deploy your application?')
   }
-  triggers {
-    parameterizedCron(cronstring)
-  }
+//  triggers {
+//    parameterizedCron(cronstring)
+//  }
   stages {
     stage ('Initialize') {
       steps {
@@ -54,6 +53,7 @@ pipeline {
           sh "${clean}"
           checkout scm
           sh "${certsprep}"
+          sh "sleep 100"
           sh "/scripts/infrastructurebuild/cosmoscomponent.sh"
       }
     }
@@ -71,6 +71,7 @@ pipeline {
         sh "${clean}"
         checkout scm
         sh "${certsprep}"
+        sh "sleep 100"
         sh "/scripts/infrastructurebuild/${env.FUNCTION}.sh"
       }
     }
