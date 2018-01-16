@@ -10,7 +10,7 @@ def clean = "git clean -ffde certs"
 pipeline {
   agent any
   options {
-    timeout(time: 1, unit: 'MINS')
+    timeout(time: 1, unit: 'MINUTES')
     timestamps ()
   }
   environment {
