@@ -128,16 +128,6 @@
         }
       ]
     },
-    "UseSpecifiedVpcAvailabilityZones": {
-      "Fn::Not": [
-        {
-          "Fn::Equals": [
-            { "Fn::Join": [ ",", { "Fn::ImportValue": "VpcAvailablityZones" } ] },
-            ""
-          ]
-        }
-      ]
-    },
     "LaunchInstances": {
       "Fn::Equals": [
         { "Ref": "IsFargate" },
