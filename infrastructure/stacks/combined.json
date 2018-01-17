@@ -1,0 +1,223 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "template to create fargate service",
+  "Parameters": {
+    "Cluster": {
+      "Type": "String",
+      "Description": "",
+      "Default": "default"
+    },
+    "ServiceName": {
+      "Type": "String",
+      "Description": "",
+      "Default": "test-cloudformation-service"
+    },
+    "LaunchType": {
+      "Type": "String",
+      "Description": "",
+      "Default": "fargate"
+    },
+    "DesiredCount": {
+      "Type": "String",
+      "Description": "",
+      "Default": "1"
+    },
+    "DeploymentMaximumPercent": {
+      "Type": "String",
+      "Description": "",
+      "Default": "200"
+    },
+    "DeploymentMinimumHealthyPercent": {
+      "Type": "String",
+      "Description": "",
+      "Default": "50"
+    },
+    "ContainerPort": {
+      "Type": "String",
+      "Description": "",
+      "Default": "80"
+    },
+    "ECSHostSecurityGroup": {
+      "Type": "String",
+      "Description": "",
+      "Default": "sg-61e1a815"
+    },
+    "PrivateSubnet1": {
+      "Type": "String",
+      "Description": "",
+      "Default": "subnet-0e198053"
+    },
+    "PrivateSubnet2": {
+      "Type": "String",
+      "Description": "",
+      "Default": "subnet-d13e61b5"
+    },
+    "VCpu": {
+      "Type": "String",
+      "Description": "",
+      "Default": "256"
+    },
+    "awsaccountid": {
+      "Type": "String",
+      "Description": "",
+      "Default": "329802642264"
+    },
+    "Memory": {
+      "Type": "String",
+      "Description": "",
+      "Default": "512"
+    },
+    "DockerImage": {
+      "Type": "String",
+      "Description": "",
+      "Default": "329802642264.dkr.ecr.eu-west-1.amazonaws.com/bbc-news/infrastructurebuild-tools:0.0.10"
+    },
+    "ContainerPort": {
+      "Type": "String",
+      "Description": "",
+      "Default": "80"
+    },
+    "VpcId": {
+      "Type": "String",
+      "Description": "",
+      "Default": "vpc-a3585edb"
+    },
+    "ELBPort": {
+      "Type": "String",
+      "Description": "",
+      "Default": "80"
+    },
+    "ELBProtocol": {
+      "Type": "String",
+      "Description": "",
+      "Default": "HTTP"
+    },
+    "HealthCheckResponseCodes": {
+      "Type": "String",
+      "Description": "",
+      "Default": "200-299"
+    },
+    "HealthCheckIntervalSeconds": {
+      "Type": "String",
+      "Description": "",
+      "Default": "80"
+    },
+    "HealthCheckPath": {
+      "Type": "String",
+      "Description": "",
+      "Default": "/"
+    },
+    "HealthCheckTimeoutSeconds": {
+      "Type": "String",
+      "Description": "",
+      "Default": "50"
+    },
+    "HealthyThresholdCount": {
+      "Type": "String",
+      "Description": "",
+      "Default": "2"
+    },
+    "UnhealthyThresholdCount": {
+      "Type": "String",
+      "Description": "",
+      "Default": "5"
+    }
+  },
+  "Resources": {
+    "Service": {
+      "Type": "AWS::ECS::Service",
+      "Properties": {
+        "Cluster": { "Ref": "Cluster" },
+        "ServiceName": { "Ref": "ServiceName" },
+        "LaunchType": { "Ref": "LaunchType" },
+        "DesiredCount": { "Ref": "DesiredCount" },
+        "DeploymentConfiguration": {
+          "MaximumPercent": { "Ref": "DeploymentMaximumPercent" },
+          "MinimumHealthyPercent": { "Ref": "DeploymentMinimumHealthyPercent" }
+        },
+        "TaskDefinition": { "Ref": "TaskDefinitionConfig" },
+        "LoadBalancers": [
+          {
+            "ContainerName":
+            { "Fn::Join": [ "-", [ { "Ref": "ServiceName" },"container" ]]},
+            "ContainerPort": { "Ref": "ContainerPort" },
+            "TargetGroupArn": { "Ref": "TargetGroupConfig" }
+          }
+        ],
+        "NetworkConfiguration": {
+          "AwsvpcConfiguration": {
+            "AssignPublicIp": "DISABLED",
+            "SecurityGroups": [
+              { "Ref": "ECSHostSecurityGroup" }
+            ],
+            "Subnets": [
+              { "Ref": "PrivateSubnet1" },
+              { "Ref": "PrivateSubnet2" }
+            ]
+          }
+        }
+      }
+    },
+    "TaskDefinitionConfig": {
+      "Type": "AWS::ECS::TaskDefinition",
+      "Properties": {
+        "Cpu": { "Ref": "VCpu" },
+        "RequiresCompatibilities": [
+          "FARGATE"
+        ],
+        "Family": { "Ref": "ServiceName" },
+        "NetworkMode": "awsvpc",
+        "ExecutionRoleArn":
+        { "Fn::Join": [ ":", [ "arn:aws:iam:", { "Ref": "awsaccountid" }, "role/ecsTaskExecutionRole" ]]},
+        "TaskRoleArn":
+        { "Fn::Join": [ ":", [ "arn:aws:iam:", { "Ref": "awsaccountid" }, "role/ecsTaskExecutionRole" ]]},
+        "Memory": { "Ref": "Memory" },
+        "ContainerDefinitions": [
+          {
+            "Name":
+            { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "container" ]]},
+            "Essential": true,
+            "Image": { "Ref": "DockerImage" },
+            "PortMappings": [
+              {
+                "ContainerPort": { "Ref": "ContainerPort" }
+              }
+            ],
+            "LogConfiguration": {
+              "LogDriver": "awslogs",
+              "Options": {
+                "awslogs-group": { "Ref": "ServiceName" },
+                "awslogs-region": "AWS::Region"
+              }
+            }
+          }
+        ]
+      }
+    },
+    "TargetGroupConfig": {
+      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
+      "Properties": {
+        "VpcId": { "Ref": "VpcId" },
+        "Port": { "Ref": "ELBPort" },
+        "Protocol": { "Ref": "ELBProtocol" },
+        "Matcher": {
+          "HttpCode": { "Ref": "HealthCheckResponseCodes" }
+        },
+        "HealthCheckIntervalSeconds": { "Ref": "HealthCheckIntervalSeconds" },
+        "HealthCheckPath": { "Ref": "HealthCheckPath" },
+        "HealthCheckProtocol": { "Ref": "ELBProtocol"  },
+        "HealthCheckTimeoutSeconds": { "Ref": "HealthCheckTimeoutSeconds"  },
+        "HealthyThresholdCount": { "Ref": "HealthyThresholdCount" },
+        "UnhealthyThresholdCount": { "Ref": "UnhealthyThresholdCount" },
+        "Name":
+        { "Fn::Join": [ "-", [ { "Ref": "ServiceName" },"TG" ]]},
+        "TargetGroupAttributes": [
+          {
+            "Key": "deregistration_delay.timeout_seconds",
+            "Value": "60"
+          }
+        ]
+      }
+    }
+  }
+}
