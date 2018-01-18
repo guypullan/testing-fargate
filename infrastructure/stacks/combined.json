@@ -153,7 +153,7 @@
             "LogConfiguration": {
               "LogDriver": "awslogs",
               "Options": {
-                "awslogs-group": { "Fn::Join": [ "/", [ "/ecs", { "Ref": "Environment" }, { "Ref": "ServiceName" } ]]},
+                "awslogs-group": { "Fn::Join": [ "/", [ "/ecs", { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "container" ]]}]]},
                 "awslogs-region": { "Ref":"AWS::Region" },
                 "awslogs-stream-prefix": "ecs"
               }
