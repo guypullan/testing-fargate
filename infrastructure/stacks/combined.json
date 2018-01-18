@@ -134,7 +134,7 @@
               "LogDriver": "awslogs",
               "Options": {
                 "awslogs-group": { "Fn::Join": [ "/", [ "/ecs", { "Ref": "ServiceName" } ]]},
-                "awslogs-region": "AWS::Region",
+                "awslogs-region": { "Ref":"AWS::Region" },
                 "awslogs-stream-prefix": "ecs"
               }
             },
