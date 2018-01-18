@@ -12,6 +12,11 @@
       "Description": "",
       "Default": "test-cloudformation-service"
     },
+    "Environment": {
+      "Type": "String",
+      "Description": "",
+      "Default": "test"
+    },
     "LaunchType": {
       "Type": "String",
       "Description": "",
