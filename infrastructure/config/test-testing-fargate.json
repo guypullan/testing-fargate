@@ -7,7 +7,7 @@
   "ImageId": "",
   "Cluster": "default",
   "ServiceName": "test-cloudformation-service",
-  "LaunchType": "fargate",
+  "LaunchType": "FARGATE",
   "DesiredCount": "1",
   "DeploymentMaximumPercent": "200",
   "DeploymentMinimumHealthyPercent": "50",
