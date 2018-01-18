@@ -118,12 +118,7 @@
             "/",
             [
               "/ecs",
-              {
-                "Ref": "Environment"
-              },
-              {
-                "Ref": "ServiceName"
-              }
+              { "Fn::Join": [ "-", [ { "Ref": "ServiceName" }, "container" ]]}
             ]
           ]
         },
