@@ -15,7 +15,7 @@
     "LaunchType": {
       "Type": "String",
       "Description": "",
-      "Default": "fargate"
+      "Default": "FARGATE"
     },
     "DesiredCount": {
       "Type": "String",
@@ -76,51 +76,6 @@
       "Type": "String",
       "Description": "",
       "Default": "80"
-    },
-    "VpcId": {
-      "Type": "String",
-      "Description": "",
-      "Default": "vpc-a3585edb"
-    },
-    "ELBPort": {
-      "Type": "String",
-      "Description": "",
-      "Default": "80"
-    },
-    "ELBProtocol": {
-      "Type": "String",
-      "Description": "",
-      "Default": "HTTP"
-    },
-    "HealthCheckResponseCodes": {
-      "Type": "String",
-      "Description": "",
-      "Default": "200-299"
-    },
-    "HealthCheckIntervalSeconds": {
-      "Type": "String",
-      "Description": "",
-      "Default": "80"
-    },
-    "HealthCheckPath": {
-      "Type": "String",
-      "Description": "",
-      "Default": "/"
-    },
-    "HealthCheckTimeoutSeconds": {
-      "Type": "String",
-      "Description": "",
-      "Default": "50"
-    },
-    "HealthyThresholdCount": {
-      "Type": "String",
-      "Description": "",
-      "Default": "2"
-    },
-    "UnhealthyThresholdCount": {
-      "Type": "String",
-      "Description": "",
-      "Default": "5"
     }
   },
   "Resources": {
@@ -136,14 +91,6 @@
           "MinimumHealthyPercent": { "Ref": "DeploymentMinimumHealthyPercent" }
         },
         "TaskDefinition": { "Ref": "TaskDefinitionConfig" },
-        "LoadBalancers": [
-          {
-            "ContainerName":
-            { "Fn::Join": [ "-", [ { "Ref": "ServiceName" },"container" ]]},
-            "ContainerPort": { "Ref": "ContainerPort" },
-            "TargetGroupArn": { "Ref": "TargetGroupConfig" }
-          }
-        ],
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
             "AssignPublicIp": "DISABLED",
@@ -186,35 +133,11 @@
             "LogConfiguration": {
               "LogDriver": "awslogs",
               "Options": {
-                "awslogs-group": { "Ref": "ServiceName" },
-                "awslogs-region": "AWS::Region"
+                "awslogs-group": { "Fn::Join": [ "/", [ "/ecs", { "Ref": "ServiceName" } ]]},
+                "awslogs-region": "AWS::Region",
+                "awslogs-stream-prefix": "ecs"
               }
             }
-          }
-        ]
-      }
-    },
-    "TargetGroupConfig": {
-      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties": {
-        "VpcId": { "Ref": "VpcId" },
-        "Port": { "Ref": "ELBPort" },
-        "Protocol": { "Ref": "ELBProtocol" },
-        "Matcher": {
-          "HttpCode": { "Ref": "HealthCheckResponseCodes" }
-        },
-        "HealthCheckIntervalSeconds": { "Ref": "HealthCheckIntervalSeconds" },
-        "HealthCheckPath": { "Ref": "HealthCheckPath" },
-        "HealthCheckProtocol": { "Ref": "ELBProtocol"  },
-        "HealthCheckTimeoutSeconds": { "Ref": "HealthCheckTimeoutSeconds"  },
-        "HealthyThresholdCount": { "Ref": "HealthyThresholdCount" },
-        "UnhealthyThresholdCount": { "Ref": "UnhealthyThresholdCount" },
-        "Name":
-        { "Fn::Join": [ "-", [ { "Ref": "ServiceName" },"TG" ]]},
-        "TargetGroupAttributes": [
-          {
-            "Key": "deregistration_delay.timeout_seconds",
-            "Value": "60"
           }
         ]
       }
