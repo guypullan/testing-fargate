@@ -70,7 +70,7 @@
     "DockerImage": {
       "Type": "String",
       "Description": "",
-      "Default": "329802642264.dkr.ecr.eu-west-1.amazonaws.com/bbc-news/infrastructurebuild-tools:0.0.10"
+      "Default": "httpd:2.4"
     },
     "ContainerPort": {
       "Type": "String",
@@ -137,7 +137,14 @@
                 "awslogs-region": "AWS::Region",
                 "awslogs-stream-prefix": "ecs"
               }
-            }
+            },
+            "entryPoint": [
+              "sh",
+              "-c"
+            ],
+            "command": [
+              "/bin/sh -c \"echo '<html> <head> <title>Amazon ECS Sample App</title> <style>body {margin-top: 40px; background-color: #333;} </style> </head><body> <div style=color:white;text-align:center> <h1>Amazon ECS Sample App</h1> <h2>Congratulations!</h2> <p>Your application is now running on a container in Amazon ECS.</p> </div></body></html>' >  /usr/local/apache2/htdocs/index.html && httpd-foreground\""
+            ],
           }
         ]
       }
