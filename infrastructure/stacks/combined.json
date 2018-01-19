@@ -84,10 +84,15 @@
     }
   },
   "Resources": {
+    "ECSCluster":{
+    "Type":"AWS::ECS::Cluster",
+    "Properties": {
+      "ClusterName": { "Ref": "Clustername"
+    },
     "Service": {
       "Type": "AWS::ECS::Service",
       "Properties": {
-        "Cluster": { "Ref": "Cluster" },
+        "Cluster": { "Ref": "ECSCluster" },
         "ServiceName": { "Ref": "ServiceName" },
         "LaunchType": { "Ref": "LaunchType" },
         "DesiredCount": { "Ref": "DesiredCount" },
@@ -98,7 +103,7 @@
         "TaskDefinition": { "Ref": "TaskDefinitionConfig" },
         "NetworkConfiguration": {
           "AwsvpcConfiguration": {
-            "AssignPublicIp": "DISABLED",
+            "AssignPublicIp": "ENABLED",
             "SecurityGroups": [
               { "Ref": "ECSHostSecurityGroup" }
             ],
@@ -167,6 +172,13 @@
             ]
           }
         ]
+      }
+    }
+  },
+  "Outputs":{
+    "ecscluster":{
+      "Value":{
+        "Ref":"ECSCluster"
       }
     }
   }

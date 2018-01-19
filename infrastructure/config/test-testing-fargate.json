@@ -5,7 +5,7 @@
   "ComponentName": "testing-fargate",
   "Environment": "test",
   "ImageId": "",
-  "Cluster": "default",
+  "Cluster": "testcluster",
   "ServiceName": "test-cloudformation-service",
   "LaunchType": "FARGATE",
   "DesiredCount": "1",
