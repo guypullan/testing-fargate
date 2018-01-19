@@ -256,34 +256,6 @@
         }
       }
     },
-    "ECSAutoScalingGroup":{
-      "Type":"AWS::AutoScaling::AutoScalingGroup",
-      "Properties":{
-        "VPCZoneIdentifier":{
-          "Ref":"SubnetId"
-        },
-        "LaunchConfigurationName":{
-          "Ref":"ContainerInstances"
-        },
-        "MinSize":"1",
-        "MaxSize":{
-          "Ref":"MaxSize"
-        },
-        "DesiredCapacity":{
-          "Ref":"DesiredCapacity"
-        }
-      },
-      "CreationPolicy":{
-        "ResourceSignal":{
-          "Timeout":"PT15M"
-        }
-      },
-      "UpdatePolicy":{
-        "AutoScalingReplacingUpdate":{
-          "WillReplace":"true"
-        }
-      }
-    },
     "ECSServiceRole":{
       "Type":"AWS::IAM::Role",
       "Properties":{
