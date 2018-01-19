@@ -12,7 +12,6 @@
     },
     "SubnetId":{
       "Type":"List<AWS::EC2::Subnet::Id>",
-      "Description": "Select at two subnets in your selected VPC."
       "Default": "subnet-0e198053,subnet-d13e61b5"
     },
     "DesiredCapacity":{
