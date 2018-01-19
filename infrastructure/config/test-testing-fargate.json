@@ -12,7 +12,7 @@
   "DeploymentMaximumPercent": "200",
   "DeploymentMinimumHealthyPercent": "50",
   "ContainerPort": "80",
-  "ECSHostSecurityGroup": "sg-61e1a815",
+  "ECSHostSecurityGroup": "sg-88426bfc",
   "PrivateSubnet1": "subnet-43114e27",
   "PrivateSubnet2": "subnet-3946df64",
   "VCpu": "256",
