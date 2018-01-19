@@ -30,6 +30,7 @@
   "HealthyThresholdCount": "2",
   "UnhealthyThresholdCount": "5",  
   "stacklist": {
-    "1": ["combined"]
+    "1:: ["cluster"],
+    "2": ["combined"]
   }
 }
