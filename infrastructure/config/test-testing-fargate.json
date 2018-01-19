@@ -31,7 +31,7 @@
   "UnhealthyThresholdCount": "5",  
   "KeyName": "cosmos",
   "stacklist": {
-    "1: ["cluster"],
+    "1": ["cluster"],
     "2": ["combined"]
   }
 }
