@@ -327,35 +327,6 @@
         ]
       }
     },
-    "ALB500sAlarmScaleUp":{
-      "Type":"AWS::CloudWatch::Alarm",
-      "Properties":{
-        "EvaluationPeriods":"1",
-        "Statistic":"Average",
-        "Threshold":"10",
-        "AlarmDescription":"Alarm if our ALB generates too many HTTP 500s.",
-        "Period":"60",
-        "AlarmActions":[
-          {
-            "Ref":"ServiceScalingPolicy"
-          }
-        ],
-        "Namespace":"AWS/ApplicationELB",
-        "Dimensions":[
-          {
-            "Name":"LoadBalancer",
-            "Value":{
-              "Fn::GetAtt" : [
-                "ECSALB",
-                "LoadBalancerFullName"
-              ]
-            }
-          }
-        ],
-        "ComparisonOperator":"GreaterThanThreshold",
-        "MetricName":"HTTPCode_ELB_5XX_Count"
-      }
-    },
     "EC2Role":{
       "Type":"AWS::IAM::Role",
       "Properties":{
