@@ -1,11 +1,6 @@
 {
   "AWSTemplateFormatVersion":"2010-09-09",
   "Parameters":{
-    "KeyName":{
-      "Type":"AWS::EC2::KeyPair::KeyName",
-      "Description":"Name of an existing EC2 KeyPair to enable SSH access to the ECS instances.",
-      "Default": "cosmos"
-    },
     "VpcId":{
       "Type":"String",
       "Description":"Select a VPC that allows instances to access the Internet."
@@ -23,45 +18,9 @@
       "Type":"Number",
       "Default":"1",
       "Description":"Maximum number of instances that can be launched in your ECS cluster."
-    },
-    "InstanceType":{
-      "Description":"EC2 instance type",
-      "Type":"String",
-      "Default":"t2.micro",
     }
   },
-  "Mappings":{
-    "AWSRegionToAMI":{
-      "us-east-1":{
-        "AMIID":"ami-eca289fb"
-      },
-      "us-east-2":{
-        "AMIID":"ami-446f3521"
-      },
-      "us-west-1":{
-        "AMIID":"ami-9fadf8ff"
-      },
-      "us-west-2":{
-        "AMIID":"ami-7abc111a"
-      },
-      "eu-west-1":{
-        "AMIID":"ami-a1491ad2"
-      },
-      "eu-central-1":{
-        "AMIID":"ami-54f5303b"
-      },
-      "ap-northeast-1":{
-        "AMIID":"ami-9cd57ffd"
-      },
-      "ap-southeast-1":{
-        "AMIID":"ami-a900a3ca"
-      },
-      "ap-southeast-2":{
-        "AMIID":"ami-5781be34"
-      }
-    }
-  },
-  "Resources":{
+  "Resources": {
     "ECSCluster":{
       "Type":"AWS::ECS::Cluster"
     },
@@ -297,114 +256,6 @@
         }
       }
     },
-    "ECSAutoScalingGroup":{
-      "Type":"AWS::AutoScaling::AutoScalingGroup",
-      "Properties":{
-        "VPCZoneIdentifier":{
-          "Ref":"SubnetId"
-        },
-        "LaunchConfigurationName":{
-          "Ref":"ContainerInstances"
-        },
-        "MinSize":"1",
-        "MaxSize":{
-          "Ref":"MaxSize"
-        },
-        "DesiredCapacity":{
-          "Ref":"DesiredCapacity"
-        }
-      },
-      "CreationPolicy":{
-        "ResourceSignal":{
-          "Timeout":"PT15M"
-        }
-      },
-      "UpdatePolicy":{
-        "AutoScalingReplacingUpdate":{
-          "WillReplace":"true"
-        }
-      }
-    },
-    "ContainerInstances":{
-      "Type":"AWS::AutoScaling::LaunchConfiguration",
-      "Properties":{
-        "ImageId":{
-          "Fn::FindInMap":[
-            "AWSRegionToAMI",
-            {
-              "Ref":"AWS::Region"
-            },
-            "AMIID"
-          ]
-        },
-        "SecurityGroups":[
-          {
-            "Ref":"EcsSecurityGroup"
-          }
-        ],
-        "InstanceType":{
-          "Ref":"InstanceType"
-        },
-        "IamInstanceProfile":{
-          "Ref":"EC2InstanceProfile"
-        },
-        "KeyName":{
-          "Ref":"KeyName"
-        },
-        "UserData":{
-          "Fn::Base64":{
-            "Fn::Join":[
-              "",
-              [
-                "#!/bin/bash -xe\n",
-                "echo ECS_CLUSTER=",
-                {
-                  "Ref":"ECSCluster"
-                },
-                " >> /etc/ecs/ecs.config\n",
-                "yum install -y aws-cfn-bootstrap\n",
-                "/opt/aws/bin/cfn-signal -e $? ",
-                "         --stack ",
-                {
-                  "Ref":"AWS::StackName"
-                },
-                "         --resource ECSAutoScalingGroup ",
-                "         --region ",
-                {
-                  "Ref":"AWS::Region"
-                },
-                "\n"
-              ]
-            ]
-          }
-        }
-      }
-    },
-    "service":{
-      "Type":"AWS::ECS::Service",
-      "DependsOn":"ALBListener",
-      "Properties":{
-        "Cluster":{
-          "Ref":"ECSCluster"
-        },
-        "DesiredCount":"1",
-        "LoadBalancers":[
-          {
-            "ContainerName":"simple-app",
-            "ContainerPort":"80",
-            "TargetGroupArn":{
-              "Ref":"ECSTG"
-            }
-          }
-        ],
-        "Role":{
-          "Ref":"ECSServiceRole"
-        },
-        "TaskDefinition":{
-          "Ref":"taskdefinition"
-        }
-      }
-    },
     "ECSServiceRole":{
       "Type":"AWS::IAM::Role",
       "Properties":{
@@ -446,90 +297,6 @@
             }
           }
         ]
-      }
-    },
-    "ServiceScalingTarget":{
-      "Type":"AWS::ApplicationAutoScaling::ScalableTarget",
-      "DependsOn":"service",
-      "Properties":{
-        "MaxCapacity":2,
-        "MinCapacity":1,
-        "ResourceId":{
-          "Fn::Join":[
-            "",
-            [
-              "service/",
-              {
-                "Ref":"ECSCluster"
-              },
-              "/",
-              {
-                "Fn::GetAtt":[
-                  "service",
-                  "Name"
-                ]
-              }
-            ]
-          ]
-        },
-        "RoleARN":{
-          "Fn::GetAtt":[
-            "AutoscalingRole",
-            "Arn"
-          ]
-        },
-        "ScalableDimension":"ecs:service:DesiredCount",
-        "ServiceNamespace":"ecs"
-      }
-    },
-    "ServiceScalingPolicy":{
-      "Type":"AWS::ApplicationAutoScaling::ScalingPolicy",
-      "Properties":{
-        "PolicyName":"AStepPolicy",
-        "PolicyType":"StepScaling",
-        "ScalingTargetId":{
-          "Ref":"ServiceScalingTarget"
-        },
-        "StepScalingPolicyConfiguration":{
-          "AdjustmentType":"PercentChangeInCapacity",
-          "Cooldown":60,
-          "MetricAggregationType":"Average",
-          "StepAdjustments":[
-            {
-              "MetricIntervalLowerBound":0,
-              "ScalingAdjustment":200
-            }
-          ]
-        }
-      }
-    },
-    "ALB500sAlarmScaleUp":{
-      "Type":"AWS::CloudWatch::Alarm",
-      "Properties":{
-        "EvaluationPeriods":"1",
-        "Statistic":"Average",
-        "Threshold":"10",
-        "AlarmDescription":"Alarm if our ALB generates too many HTTP 500s.",
-        "Period":"60",
-        "AlarmActions":[
-          {
-            "Ref":"ServiceScalingPolicy"
-          }
-        ],
-        "Namespace":"AWS/ApplicationELB",
-        "Dimensions":[
-          {
-            "Name":"LoadBalancer",
-            "Value":{
-              "Fn::GetAtt" : [
-                "ECSALB",
-                "LoadBalancerFullName"
-              ]
-            }
-          }
-        ],
-        "ComparisonOperator":"GreaterThanThreshold",
-        "MetricName":"HTTPCode_ELB_5XX_Count"
       }
     },
     "EC2Role":{
