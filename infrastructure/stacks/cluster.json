@@ -7,11 +7,11 @@
       "Default": "cosmos"
     },
     "VpcId":{
-      "Type":"AWS::EC2::VPC::Id",
+      "Type":"String",
       "Description":"Select a VPC that allows instances to access the Internet."
     },
     "SubnetId":{
-      "Type":"List<AWS::EC2::Subnet::Id>",
+      "Type":"String",
       "Default": "subnet-0e198053,subnet-d13e61b5"
     },
     "DesiredCapacity":{
