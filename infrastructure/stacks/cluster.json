@@ -2,11 +2,11 @@
   "AWSTemplateFormatVersion":"2010-09-09",
   "Parameters":{
     "VpcId":{
-      "Type":"string",
+      "Type":"String",
       "Description":"Select a VPC that allows instances to access the Internet."
     },
     "SubnetId":{
-      "Type":"string",
+      "Type":"String",
       "Default": "subnet-0e198053,subnet-d13e61b5"
     },
     "DesiredCapacity":{
