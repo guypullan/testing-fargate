@@ -6,7 +6,7 @@
       "Description":"Select a VPC that allows instances to access the Internet."
     },
     "SubnetId":{
-      "Type":"List",
+      "Type":"string",
       "Default": "subnet-0e198053,subnet-d13e61b5"
     },
     "DesiredCapacity":{
