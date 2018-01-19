@@ -87,7 +87,7 @@
     "ECSCluster":{
     "Type":"AWS::ECS::Cluster",
     "Properties": {
-      "ClusterName": { "Ref": "Clustername"
+      "ClusterName": { "Ref": "Clustername" }
     },
     "Service": {
       "Type": "AWS::ECS::Service",
