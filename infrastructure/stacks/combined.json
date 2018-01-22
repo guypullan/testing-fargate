@@ -113,15 +113,7 @@
               { "Ref": "PrivateSubnet2" }
             ]
           }
-        },
-        "LoadBalancers": [
-          {
-            "ContainerName":
-            { "Fn::Join": [ "-", [ { "Ref": "ServiceName" },"container" ]]},
-            "ContainerPort": { "Ref": "ContainerPort" },
-            "TargetGroupArn": { "Ref": "TargetGroupConfig" }
-          }
-        ]
+        }
       }
     },
     "FargateLogGroup": {
@@ -182,85 +174,12 @@
           }
         ]
       }
-    },
-    "TargetGroupConfig": {
-      "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
-      "Properties": {
-        "VpcId": { "Ref": "VpcId" },
-        "Port": { "Ref": "ELBPort" },
-        "Protocol": { "Ref": "ELBProtocol" },
-        "Matcher": {
-          "HttpCode": { "Ref": "HealthCheckResponseCodes" }
-        },
-        "HealthCheckIntervalSeconds": { "Ref": "HealthCheckIntervalSeconds" },
-        "HealthCheckPath": { "Ref": "HealthCheckPath" },
-        "HealthCheckProtocol": { "Ref": "ELBProtocol"  },
-        "HealthCheckTimeoutSeconds": { "Ref": "HealthCheckTimeoutSeconds"  },
-        "HealthyThresholdCount": { "Ref": "HealthyThresholdCount" },
-        "UnhealthyThresholdCount": { "Ref": "UnhealthyThresholdCount" },
-        "Name":
-        { "Fn::Join": [ "-", [ { "Ref": "ServiceName" },"TG" ]]},
-        "TargetGroupAttributes": [
-          {
-            "Key": "deregistration_delay.timeout_seconds",
-            "Value": "60"
-          }
-        ],
-        "TargetType": "ip"
-      }
-    },
-    "ElasticLoadBalancer": {
-      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-      "Properties": {
-        "Name": "ElasticLoadBalancer",
-        "SecurityGroups": [
-          "AlbSecurityGroup"
-        ],
-        "Subnets": {
-          "Fn::Split": [
-            ",",
-            {
-              "Fn::ImportValue": "core-infra-adapter-PublicSubnets"
-            }
-          ]
-        },
-        "Scheme": "internet-facing"
-      }
-    },
-    "LoadBalancerListener": {
-      "Type": "AWS::ElasticLoadBalancingV2::Listener",
-      "Properties": {
-        "LoadBalancerArn": "ElasticLoadBalancer",
-        "Port": "ElbPort",
-        "Protocol": "HTTP",
-        "DefaultActions": [
-          {
-            "Type": "forward",
-            "TargetGroupArn": "TargetGroupConfig"
-          }
-        ]
-      }
-    },
-    "AlbSecurityGroup": {
-      "Type": "AWS::EC2::SecurityGroup",
-      "Properties": {
-        "GroupDescription": "ELB Allowed Ports",
-        "VpcId": { "Ref": "VpcId" },
-        "SecurityGroupIngress": [
-          {
-            "IpProtocol": "tcp",
-            "FromPort": { "Ref": "ELBPort" },
-            "ToPort": { "Ref": "ELBPort" },
-            "CidrIp": "SourceCidr"
-          }
-        ]
-      }
-    },
-    "Outputs":{
-      "ecscluster":{
-        "Value":{
-          "Ref":"ECSCluster"
-        }
+    }
+  },
+  "Outputs":{
+    "ecscluster":{
+      "Value":{
+        "Ref":"ECSCluster"
       }
     }
   }
