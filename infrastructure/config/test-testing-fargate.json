@@ -10,7 +10,7 @@
   "LaunchType": "FARGATE",
   "DesiredCount": "1",
   "DeploymentMaximumPercent": "200",
-  "DeploymentMinimumHealthyPercent": "50",
+  "DeploymentMinimumHealthyPercent": "100",
   "ContainerPort": "80",
   "ECSHostSecurityGroup": "sg-88426bfc",
   "PrivateSubnet1": "subnet-43114e27",
