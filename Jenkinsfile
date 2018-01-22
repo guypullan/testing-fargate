@@ -45,7 +45,7 @@ pipeline {
       }
       agent {
         docker {
-          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.10"
+          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.11"
           args "-u root -v /etc/pki/tls:/certs"
         }
       }
@@ -62,7 +62,7 @@ pipeline {
       }
       agent {
         docker {
-          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.10"
+          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.11"
           args "-u root -v /etc/pki/tls:/certs"
         }
       }
@@ -79,7 +79,7 @@ pipeline {
       }
       agent {
         docker {
-          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.6"
+          image "${dockerregistry}/bbc-news/infrastructurebuild-tools:0.0.11"
           args "-u root -v /etc/pki/tls:/certs"
         }
       }
