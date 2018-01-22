@@ -236,7 +236,7 @@
         "DefaultActions": [
           {
             "Type": "forward",
-            "TargetGroupArn": "DefaultTargetGroup"
+            "TargetGroupArn": "TargetGroupConfig"
           }
         ]
       }
@@ -245,12 +245,12 @@
       "Type": "AWS::EC2::SecurityGroup",
       "Properties": {
         "GroupDescription": "ELB Allowed Ports",
-        "VpcId": "Vpc",
+        "VpcId": { "Ref": "VpcId" },
         "SecurityGroupIngress": [
           {
             "IpProtocol": "tcp",
-            "FromPort": "ElbPort",
-            "ToPort": "ElbPort",
+            "FromPort": { "Ref": "ELBPort" },
+            "ToPort": { "Ref": "ELBPort" },
             "CidrIp": "SourceCidr"
           }
         ]
