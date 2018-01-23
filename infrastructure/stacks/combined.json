@@ -75,9 +75,6 @@
         "ClusterName": { "Ref": "Cluster" }
       }
     },
-    "KeyName": {
-      "Fn::ImportValue": "core-infra-adapter-KeyName"
-    },
     "Service": {
       "Type": "AWS::ECS::Service",
       "Properties": {
@@ -163,6 +160,26 @@
           }
         ]
       }
+    }
+  },
+  "ElasticLoadBalancer": {
+    "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+    "Properties": {
+      "Name": "ElasticLoadBalancer",
+      "SecurityGroups": [
+        {
+          "Fn::ImportValue": "core-infra-adapter-BastionAccessSecurityGroup"
+        }
+      ],
+      "Subnets": {
+        "Fn::Split": [
+          ",",
+          {
+            "Fn::ImportValue": "core-infra-adapter-PublicSubnets"
+          }
+        ]
+      },
+      "Scheme": "internet-facing"
     }
   },
   "Outputs": {
