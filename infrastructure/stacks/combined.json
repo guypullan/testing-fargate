@@ -75,6 +75,9 @@
         "ClusterName": { "Ref": "Cluster" }
       }
     },
+    "KeyName": {
+      "Fn::ImportValue": "core-infra-adapter-KeyName"
+    },
     "Service": {
       "Type": "AWS::ECS::Service",
       "Properties": {
