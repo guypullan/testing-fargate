@@ -220,8 +220,7 @@
         ],
         "TargetType": "ip"
       }
-    },
-    
+    }
   },
   "Outputs": {
     "ECSCluster":{
