@@ -160,26 +160,26 @@
           }
         ]
       }
-    }
-  },
-  "ElasticLoadBalancer": {
-    "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
-    "Properties": {
-      "Name": "ElasticLoadBalancer",
-      "SecurityGroups": [
-        {
-          "Fn::ImportValue": "core-infra-adapter-BastionAccessSecurityGroup"
-        }
-      ],
-      "Subnets": {
-        "Fn::Split": [
-          ",",
+    },
+    "ElasticLoadBalancer": {
+      "Type": "AWS::ElasticLoadBalancingV2::LoadBalancer",
+      "Properties": {
+        "Name": "ElasticLoadBalancer",
+        "SecurityGroups": [
           {
-            "Fn::ImportValue": "core-infra-adapter-PublicSubnets"
+            "Fn::ImportValue": "core-infra-adapter-BastionAccessSecurityGroup"
           }
-        ]
-      },
-      "Scheme": "internet-facing"
+        ],
+        "Subnets": {
+          "Fn::Split": [
+            ",",
+            {
+              "Fn::ImportValue": "core-infra-adapter-PublicSubnets"
+            }
+          ]
+        },
+        "Scheme": "internet-facing"
+      }
     }
   },
   "Outputs": {
