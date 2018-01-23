@@ -1,4 +1,4 @@
-{
+§{
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "template to create fargate service",
   "Parameters": {
@@ -46,16 +46,6 @@
       "Type": "String",
       "Description": "",
       "Default": "sg-61e1a815"
-    },
-    "PrivateSubnet1": {
-      "Type": "String",
-      "Description": "",
-      "Default": "subnet-0e198053"
-    },
-    "PrivateSubnet2": {
-      "Type": "String",
-      "Description": "",
-      "Default": "subnet-d13e61b5"
     },
     "VCpu": {
       "Type": "String",
@@ -108,10 +98,9 @@
             "SecurityGroups": [
               { "Ref": "ECSHostSecurityGroup" }
             ],
-            "Subnets": [
-              { "Ref": "PrivateSubnet1" },
-              { "Ref": "PrivateSubnet2" }
-            ]
+            "Subnets": {
+              "Fn::Split": [ ",", { "Fn::ImportValue": "core-infra-adapter-PrivateSubnets" } ]
+            }
           }
         }
       }
