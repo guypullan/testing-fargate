@@ -96,6 +96,9 @@
           "AwsvpcConfiguration": {
             "AssignPublicIp": "ENABLED",
             "SecurityGroups": [
+              {
+                "Fn::ImportValue": "core-infra-adapter-BastionAccessSecurityGroup"
+              },
               { "Ref": "ECSHostSecurityGroup" }
             ],
             "Subnets": {
