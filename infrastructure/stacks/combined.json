@@ -42,11 +42,6 @@
       "Description": "",
       "Default": "80"
     },
-    "ECSHostSecurityGroup": {
-      "Type": "String",
-      "Description": "",
-      "Default": "sg-61e1a815"
-    },
     "VCpu": {
       "Type": "String",
       "Description": "",
@@ -98,8 +93,7 @@
             "SecurityGroups": [
               {
                 "Fn::ImportValue": "core-infra-adapter-BastionAccessSecurityGroup"
-              },
-              { "Ref": "ECSHostSecurityGroup" }
+              }
             ],
             "Subnets": {
               "Fn::Split": [ ",", { "Fn::ImportValue": "core-infra-adapter-PrivateSubnets" } ]
@@ -168,10 +162,25 @@
       }
     }
   },
-  "Outputs":{
-    "ecscluster":{
+  "Outputs": {
+    "ECSCluster":{
       "Value":{
         "Ref":"ECSCluster"
+      }
+    },
+    "FargateLogGroup": {
+      "Value": {
+        "Ref": "FargateLogGroup"
+      }
+    },
+    "Fargate-Servicename": {
+      "Value": {
+        "Ref": "Service"
+      }
+    },
+    "Fargate-TaskDefinition": {
+      "Value": {
+        "Ref": "TaskDefinitionConfig"
       }
     }
   }
