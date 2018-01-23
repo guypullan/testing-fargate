@@ -173,12 +173,12 @@
         "Ref": "FargateLogGroup"
       }
     },
-    "Fargate-Servicename": {
+    "FargateServicename": {
       "Value": {
         "Ref": "Service"
       }
     },
-    "Fargate-TaskDefinition": {
+    "FargateTaskDefinition": {
       "Value": {
         "Ref": "TaskDefinitionConfig"
       }
