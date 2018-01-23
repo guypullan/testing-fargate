@@ -75,6 +75,30 @@
     "ELBPort": {
       "Type": "String",
       "Description": ""
+    },
+    "HealthCheckIntervalSeconds": {
+      "Type": "String",
+      "Description": ""
+    },
+    "HealthyThresholdCount": {
+      "Type": "String",
+      "Description": ""
+    },
+    "HealthCheckResponseCodes": {
+      "Type": "String",
+      "Description": ""
+    },
+    "HealthCheckPath": {
+      "Type": "String",
+      "Description": ""
+    },
+    "UnhealthyThresholdCount": {
+      "Type": "String",
+      "Description": ""
+    },
+    "HealthCheckTimeoutSeconds": {
+      "Type": "String",
+      "Description": ""
     }
   },
   "Resources": {
@@ -207,7 +231,7 @@
     "TargetGroupConfig": {
       "Type": "AWS::ElasticLoadBalancingV2::TargetGroup",
       "Properties": {
-        "VpcId": { "Ref": "VpcId" },
+        "VpcId": { "Fn::ImportValue": "core-infra-adapter-VpcId" },
         "Port": { "Ref": "ELBPort" },
         "Protocol": { "Ref": "ELBProtocol" },
         "Matcher": {
