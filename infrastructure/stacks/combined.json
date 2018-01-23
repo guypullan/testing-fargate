@@ -1,4 +1,4 @@
-§{
+{
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "template to create fargate service",
   "Parameters": {
