@@ -66,6 +66,15 @@
       "Type": "String",
       "Description": "",
       "Default": "80"
+    },
+    "ELBProtocol": {
+      "Type": "String",
+      "Description": "",
+      "Default": "tcp"
+    },
+    "ELBPort": {
+      "Type": "String",
+      "Description": ""
     }
   },
   "Resources": {
@@ -185,7 +194,7 @@
       "Type": "AWS::ElasticLoadBalancingV2::Listener",
       "Properties": {
         "LoadBalancerArn": "ElasticLoadBalancer",
-        "Port": { "Ref": "ElbPort" },
+        "Port": { "Ref": "ELBPort" },
         "Protocol": { "Ref": "ELBProtocol" },
         "DefaultActions": [
           {
