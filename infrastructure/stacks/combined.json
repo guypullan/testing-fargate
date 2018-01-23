@@ -201,7 +201,8 @@
     "FargateTaskDefinition": {
       "Value": {
         "Ref": "TaskDefinitionConfig"
-      },
+      }
+    },
     "ElasticLoadBalancer": {
       "Value": {
         "Ref": "ElasticLoadBalancer"
